@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint (type-check)
+        run: npm run lint --workspaces --if-present
+
+      - name: Test relay
+        run: npm test
+
+      - name: Build relay
+        run: npm run build -w @collab/server
+
+      - name: Build web
+        run: npm run build -w @collab/web
